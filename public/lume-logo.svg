@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" fill="none">
+  <!-- Minimalist Flame / Light Motif -->
+  <path d="M42 20C42 20 48 30 48 38C48 44.6274 42.6274 50 36 50C29.3726 50 24 44.6274 24 38C24 30 30 20 30 20C30 20 34 27 36 27C38 27 42 20 42 20Z" fill="#B8944F"/>
+  <circle cx="36" cy="38" r="4" fill="#543F29"/>
+  <!-- Elegant Typography: LUME -->
+  <text x="65" y="46" font-family="'Cinzel', serif, Georgia" font-size="32" font-weight="600" letter-spacing="6" fill="#1A1817">LUME</text>
+  <!-- Subtitle -->
+  <text x="67" y="58" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="500" letter-spacing="3.5" fill="#7E5E34">HOME &amp; SCENTS</text>
+</svg>
