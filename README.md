@@ -110,26 +110,70 @@ lume-ecommerce/
 
 ---
 
-## 🚀 Paso 4: Despliegue en Render (Render Web Service)
+---
 
-### Método A: Despliegue Directo vía Git (Recomendado)
-1. Sube este repositorio a GitHub.
-2. En [render.com](https://render.com), haz clic en **New + > Web Service**.
-3. Conecta tu repositorio de GitHub.
-4. Completa la configuración básica:
-   - **Environment:** `Node`
+## ☁️ Paso 4: Despliegue en Google Cloud Run & Firebase Hosting (Arquitectura Google Cloud)
+
+Esta arquitectura desacopla el frontend y el backend para máximo rendimiento y **100% Free Tier**:
+- **Firebase Hosting:** Actúa como CDN global para caché de contenido estático y enrutador HTTPS.
+- **Google Cloud Run:** Ejecuta el contenedor Docker de Next.js escalando automáticamente a 0 instancias cuando no hay tráfico.
+
+### 1. Despliegue a Google Cloud Run (Backend)
+Desde tu terminal con `gcloud`:
+```bash
+# Habilitar servicios de Cloud Run y Artifact Registry
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com
+
+# Compilar y desplegar el contenedor directamente a Cloud Run
+gcloud run deploy lume-backend \
+  --source . \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --port 8080 \
+  --memory 512Mi \
+  --cpu 1 \
+  --min-instances 0 \
+  --max-instances 3
+```
+
+### 2. Conectar con Firebase Hosting (Frontend / CDN)
+El archivo `firebase.json` ya tiene configurado el rewrite automático:
+```json
+{
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "lume-backend",
+          "region": "us-central1"
+        }
+      }
+    ]
+  }
+}
+```
+
+Para publicar Firebase Hosting:
+```bash
+# Desplegar las reglas de Hosting conectadas a Cloud Run
+npx firebase-tools deploy --only hosting
+```
+
+---
+
+## 🚀 Opción Alternativa: Despliegue en Render (Render Web Service)
+
+### Método A: Despliegue Directo vía Git
+1. Conecta tu repositorio de GitHub en [render.com](https://render.com).
+2. Parámetros:
+   - **Environment:** `Node` o `Docker`
    - **Plan:** `Free`
    - **Build Command:** `npm install && npm run build`
    - **Start Command:** `npm run start`
-5. En la sección **Environment Variables**, añade las variables de tu archivo `.env.example`:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_FIREBASE_API_KEY`
-   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
-   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
-   - `NEXT_PUBLIC_WHATSAPP_PHONE` (Ej. `5491122334455`)
-   - `NEXT_PUBLIC_STORE_NAME` (`Lume Home & Scents`)
-6. Haz clic en **Create Web Service**. ¡Render compilará y desplegará la app automáticamente!
+3. Agrega tus variables de entorno desde `.env.example`.
 
 ### Método B: Vía Blueprint (`render.yaml`)
 En Render, selecciona **New + > Blueprint**, apunta a este repositorio y Render detectará automáticamente [`render.yaml`](file:///C:/Users/Usuario/.gemini/antigravity/scratch/lume-ecommerce/render.yaml).
