@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useBranding } from "@/context/BrandingContext";
 import { ShoppingBag, ShieldCheck, Menu, X, Sparkles } from "lucide-react";
 
 export default function Navbar() {
   const { totalItems, setIsCartOpen } = useCart();
+  const { logoUrl, storeName } = useBranding();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -25,22 +27,32 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Logo LUME */}
+          {/* Logo Corporativo Dinámico */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="group flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] p-0.5 flex items-center justify-center shadow-sm">
-                <div className="w-full h-full bg-[#FAF8F5] rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-[#9D7940] group-hover:rotate-12 transition-transform" />
+              {logoUrl && logoUrl !== "/lume-logo.svg" ? (
+                <img
+                  src={logoUrl}
+                  alt={storeName}
+                  className="h-11 max-w-[180px] object-contain transition-transform group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] p-0.5 flex items-center justify-center shadow-sm">
+                    <div className="w-full h-full bg-[#FAF8F5] rounded-full flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-[#9D7940] group-hover:rotate-12 transition-transform" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-stone-900 leading-none">
+                      {storeName?.split(" ")[0]?.toUpperCase() || "LUME"}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-[0.3em] text-[#9D7940] font-semibold mt-0.5">
+                      {storeName?.split(" ").slice(1).join(" ") || "Home & Scents"}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-stone-900 leading-none">
-                  LUME
-                </span>
-                <span className="text-[9px] uppercase tracking-[0.3em] text-[#9D7940] font-semibold mt-0.5">
-                  Home &amp; Scents
-                </span>
-              </div>
+              )}
             </Link>
           </div>
 

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useBranding } from "@/context/BrandingContext";
 import {
   LayoutDashboard,
   Package,
@@ -12,12 +13,15 @@ import {
   Users,
   ExternalLink,
   LogOut,
-  Sparkles
+  Sparkles,
+  KeyRound,
+  Palette
 } from "lucide-react";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const { logout, user } = useAuth();
+  const { logoUrl, storeName } = useBranding();
 
   const navItems = [
     { name: "Dashboard Financiero", href: "/admin", icon: LayoutDashboard },
@@ -25,30 +29,42 @@ export default function AdminSidebar() {
     { name: "Ventas y POS", href: "/admin/ventas", icon: ShoppingBag },
     { name: "Gastos y Compras", href: "/admin/finanzas", icon: TrendingDown },
     { name: "Clientes", href: "/admin/clientes", icon: Users },
+    { name: "Usuarios y Accesos", href: "/admin/usuarios", icon: KeyRound },
+    { name: "Configuración & Logo", href: "/admin/configuracion", icon: Palette },
   ];
 
   return (
     <aside className="w-64 bg-stone-900 text-stone-300 flex flex-col flex-shrink-0 min-h-screen border-r border-stone-800">
       
-      {/* Brand Header */}
+      {/* Brand Header con Logo Dinámico */}
       <div className="p-6 border-b border-stone-800">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] flex items-center justify-center shadow-lg">
-            <Sparkles className="w-5 h-5 text-stone-900" />
-          </div>
-          <div>
-            <span className="font-editorial text-xl font-bold tracking-widest text-white block leading-none">
-              LUME
-            </span>
-            <span className="text-[10px] uppercase tracking-widest text-[#B8944F] font-semibold">
-              Admin Suite
-            </span>
-          </div>
+          {logoUrl && logoUrl !== "/lume-logo.svg" ? (
+            <img
+              src={logoUrl}
+              alt={storeName}
+              className="h-10 max-w-[160px] object-contain"
+            />
+          ) : (
+            <>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] flex items-center justify-center shadow-lg flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-stone-900" />
+              </div>
+              <div className="min-w-0">
+                <span className="font-editorial text-xl font-bold tracking-widest text-white block leading-none truncate">
+                  {storeName?.split(" ")[0]?.toUpperCase() || "LUME"}
+                </span>
+                <span className="text-[10px] uppercase tracking-widest text-[#B8944F] font-semibold">
+                  Admin Suite
+                </span>
+              </div>
+            </>
+          )}
         </Link>
       </div>
 
       {/* Navegación Principal */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5">
+      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500 px-3 mb-2">
           Módulos del Sistema
         </div>
@@ -92,16 +108,16 @@ export default function AdminSidebar() {
       {/* Usuario y Logout */}
       <div className="p-4 border-t border-stone-800 bg-stone-950/40">
         <div className="flex items-center gap-3 mb-3 px-2">
-          <img
-            src={user?.user_metadata?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"}
-            alt="Usuario"
-            className="w-8 h-8 rounded-full object-cover border border-[#9D7940]"
-          />
+          <div className="w-8 h-8 rounded-full bg-stone-800 border border-[#9D7940] flex items-center justify-center font-bold text-[#DAC594] text-xs">
+            {user?.nombre?.charAt(0) || "A"}
+          </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-white truncate">
-              {user?.user_metadata?.full_name || user?.email || "Administrador Lume"}
+              {user?.nombre || user?.email || "Administrador"}
             </p>
-            <p className="text-[10px] text-stone-400 truncate">Google Auth</p>
+            <p className="text-[10px] text-stone-400 truncate">
+              {user?.rol || "Administrador General"}
+            </p>
           </div>
         </div>
 

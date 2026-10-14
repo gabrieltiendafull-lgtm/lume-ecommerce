@@ -280,3 +280,48 @@ VALUES
 ('EcoSoy Supplies Co.', 'Cera de soja en escamas 50kg y mechas de madera', 280.00, CURRENT_DATE - INTERVAL '20 days'),
 ('AromaLab Esencias', 'Aceites esenciales puros (Sándalo, Lavanda, Ámbar)', 195.00, CURRENT_DATE - INTERVAL '12 days'),
 ('Cerámicas Del Valle', '50 Cuencos de cerámica mate para velas', 160.00, CURRENT_DATE - INTERVAL '7 days');
+
+-- ==============================================================================
+-- 7. TABLA: USUARIOS_ADMIN (Credenciales y usuarios administradores)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.usuarios_admin (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    usuario VARCHAR(100) UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    rol VARCHAR(100) DEFAULT 'Administrador General',
+    activo BOOLEAN DEFAULT TRUE,
+    creado_en TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.usuarios_admin ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read Usuarios Admin" ON public.usuarios_admin FOR SELECT USING (true);
+CREATE POLICY "Admin All Usuarios Admin" ON public.usuarios_admin FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Usuario inicial por defecto
+INSERT INTO public.usuarios_admin (nombre, email, usuario, password, rol)
+VALUES ('Administrador Principal', 'admin@lume.com', 'admin', 'admin123', 'Administrador General')
+ON CONFLICT (email) DO NOTHING;
+
+-- ==============================================================================
+-- 8. TABLA: CONFIGURACION (Logo dinámico, nombre de empresa y branding)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.configuracion (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    clave VARCHAR(100) UNIQUE NOT NULL,
+    valor TEXT NOT NULL,
+    actualizado_en TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.configuracion ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Read Configuracion" ON public.configuracion FOR SELECT USING (true);
+CREATE POLICY "Admin All Configuracion" ON public.configuracion FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+INSERT INTO public.configuracion (clave, valor)
+VALUES 
+('logo_url', '/lume-logo.svg'),
+('store_name', 'Lume Home & Scents'),
+('brand_tagline', 'Luz, calma y esencias puras para tu espacio')
+ON CONFLICT (clave) DO NOTHING;
+

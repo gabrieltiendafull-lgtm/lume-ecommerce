@@ -1,7 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase, isConfigured, signInWithGoogle, signOutAdmin, getCurrentUser } from "@/lib/supabase";
+import {
+  supabase,
+  isConfigured,
+  signInWithCredentials,
+  signInWithGoogle,
+  signOutAdmin,
+  getCurrentUser,
+} from "@/lib/supabase";
 
 const AuthContext = createContext();
 
@@ -26,7 +33,14 @@ export function AuthProvider({ children }) {
     if (isConfigured) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (_event, session) => {
-          setUser(session?.user ?? null);
+          if (session?.user) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email,
+              nombre: session.user.user_metadata?.full_name || session.user.email,
+              rol: "Administrador General",
+            });
+          }
           setLoading(false);
         }
       );
@@ -37,6 +51,18 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Inicio de sesión con credenciales (Usuario/Email y Contraseña)
+  const loginWithCredentials = async (identifier, password) => {
+    setLoading(true);
+    const { data, error } = await signInWithCredentials(identifier, password);
+    if (!error && data?.user) {
+      setUser(data.user);
+    }
+    setLoading(false);
+    return { data, error };
+  };
+
+  // Google OAuth complementario
   const loginWithGoogle = async () => {
     setLoading(true);
     const { data, error } = await signInWithGoogle();
@@ -59,6 +85,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        loginWithCredentials,
         loginWithGoogle,
         logout,
         isAuthenticated: Boolean(user),
