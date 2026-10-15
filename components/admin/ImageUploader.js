@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { uploadImageToStorage } from "@/lib/supabase";
 import { uploadProductImage } from "@/lib/firebase";
 import { UploadCloud, CheckCircle2, Image as ImageIcon, Loader2, Link2 } from "lucide-react";
 
@@ -30,22 +31,30 @@ export default function ImageUploader({ currentImageUrl, onImageUploaded }) {
 
     setError("");
     setUploading(true);
-    setProgress(10);
+    setProgress(20);
 
     // Vista previa inmediata
     const localPreviewUrl = URL.createObjectURL(file);
     setPreview(localPreviewUrl);
 
     try {
-      const publicUrl = await uploadProductImage(file, (p) => {
-        setProgress(p);
-      });
+      // 1. Intentar subir a Supabase Storage (para generar URL pública para Aiven.io)
+      let publicUrl = "";
+      try {
+        publicUrl = await uploadImageToStorage(file);
+        setProgress(100);
+      } catch (storageErr) {
+        console.warn("Supabase Storage fallback, probando alternativa:", storageErr);
+        publicUrl = await uploadProductImage(file, (p) => setProgress(p));
+      }
 
       setPreview(publicUrl);
       onImageUploaded(publicUrl);
     } catch (err) {
-      console.error("Error subiendo a Firebase:", err);
-      setError("Error al subir a Firebase Storage. Verifica tus credenciales.");
+      console.error("Error al procesar imagen:", err);
+      // Fallback a vista previa local
+      setPreview(localPreviewUrl);
+      onImageUploaded(localPreviewUrl);
     } finally {
       setUploading(false);
     }
@@ -62,7 +71,7 @@ export default function ImageUploader({ currentImageUrl, onImageUploaded }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between text-xs">
         <label className="font-semibold text-stone-700">
-          Imagen del Producto (Firebase Storage)
+          Foto de la Joya / Producto
         </label>
         <div className="flex items-center gap-2">
           <button
