@@ -45,7 +45,7 @@ export default function Navbar() {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-stone-900 leading-none">
-                      {storeName?.split(" ")[0]?.toUpperCase() || "LUME"}
+                      {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
                     </span>
                     <span className="text-[9px] uppercase tracking-[0.3em] text-[#9D7940] font-semibold mt-0.5">
                       {storeName?.split(" ").slice(1).join(" ") || "Home & Scents"}

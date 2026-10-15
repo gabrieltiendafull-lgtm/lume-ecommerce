@@ -7,7 +7,7 @@ const BrandingContext = createContext();
 
 const DEFAULT_BRANDING = {
   logoUrl: "/lume-logo.svg",
-  storeName: "Lume Home & Scents",
+  storeName: "Lumé Home & Scents",
   brandTagline: "Luz, calma y esencias puras para tu espacio",
 };
 
