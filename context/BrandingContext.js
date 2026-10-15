@@ -7,8 +7,11 @@ const BrandingContext = createContext();
 
 const DEFAULT_BRANDING = {
   logoUrl: "/lume-logo.svg",
-  storeName: "Lumé Home & Scents",
-  brandTagline: "Luz, calma y esencias puras para tu espacio",
+  storeName: "Lumé Joyas & Accesorios",
+  brandTagline: "Joyas, pulseras y cadenitas delicadas para mujer",
+  whatsappPhone: "+54 9 11 2233-4455",
+  whatsappButtonText: "Enviar Confirmación por WhatsApp",
+  whatsappCustomMsg: "¡Hola Lumé! Quiero confirmar mi pedido realizado en la tienda online.",
 };
 
 export function BrandingProvider({ children }) {
@@ -20,11 +23,14 @@ export function BrandingProvider({ children }) {
     async function loadBranding() {
       try {
         const remoteConfig = await getBrandingConfig();
-        if (remoteConfig && (remoteConfig.logo_url || remoteConfig.store_name)) {
+        if (remoteConfig && (remoteConfig.logo_url || remoteConfig.store_name || remoteConfig.whatsapp_phone)) {
           const updated = {
             logoUrl: remoteConfig.logo_url || DEFAULT_BRANDING.logoUrl,
             storeName: remoteConfig.store_name || DEFAULT_BRANDING.storeName,
             brandTagline: remoteConfig.brand_tagline || DEFAULT_BRANDING.brandTagline,
+            whatsappPhone: remoteConfig.whatsapp_phone || DEFAULT_BRANDING.whatsappPhone,
+            whatsappButtonText: remoteConfig.whatsapp_button_text || DEFAULT_BRANDING.whatsappButtonText,
+            whatsappCustomMsg: remoteConfig.whatsapp_custom_msg || DEFAULT_BRANDING.whatsappCustomMsg,
           };
           setBranding(updated);
         }
@@ -38,7 +44,7 @@ export function BrandingProvider({ children }) {
     loadBranding();
   }, []);
 
-  // Actualizar solo el logo en el servidor central (se propaga a todos los dispositivos)
+  // Actualizar solo el logo en el servidor central
   const updateLogo = async (newLogoUrl) => {
     const updated = { ...branding, logoUrl: newLogoUrl };
     setBranding(updated);
@@ -47,9 +53,37 @@ export function BrandingProvider({ children }) {
         logo_url: newLogoUrl,
         store_name: updated.storeName,
         brand_tagline: updated.brandTagline,
+        whatsapp_phone: updated.whatsappPhone,
+        whatsapp_button_text: updated.whatsappButtonText,
+        whatsapp_custom_msg: updated.whatsappCustomMsg,
       });
     } catch (e) {
       console.warn("Error al persistir logo en servidor:", e);
+    }
+  };
+
+  // Actualizar configuración de WhatsApp en el servidor central
+  const updateWhatsApp = async ({ phone, buttonText, customMsg }) => {
+    const updated = {
+      ...branding,
+      whatsappPhone: phone !== undefined ? phone : branding.whatsappPhone,
+      whatsappButtonText: buttonText !== undefined ? buttonText : branding.whatsappButtonText,
+      whatsappCustomMsg: customMsg !== undefined ? customMsg : branding.whatsappCustomMsg,
+    };
+    setBranding(updated);
+    try {
+      await saveBrandingConfig({
+        logo_url: updated.logoUrl,
+        store_name: updated.storeName,
+        brand_tagline: updated.brandTagline,
+        whatsapp_phone: updated.whatsappPhone,
+        whatsapp_button_text: updated.whatsappButtonText,
+        whatsapp_custom_msg: updated.whatsappCustomMsg,
+      });
+      return { success: true };
+    } catch (e) {
+      console.warn("Error al persistir whatsapp en servidor:", e);
+      return { error: e.message };
     }
   };
 
@@ -62,13 +96,16 @@ export function BrandingProvider({ children }) {
         logo_url: updated.logoUrl,
         store_name: updated.storeName,
         brand_tagline: updated.brandTagline,
+        whatsapp_phone: updated.whatsappPhone,
+        whatsapp_button_text: updated.whatsappButtonText,
+        whatsapp_custom_msg: updated.whatsappCustomMsg,
       });
     } catch (e) {
       console.warn("Error al persistir branding en servidor:", e);
     }
   };
 
-  // Restablecer al logo original
+  // Restablecer al diseño original
   const resetBranding = async () => {
     setBranding(DEFAULT_BRANDING);
     try {
@@ -76,6 +113,9 @@ export function BrandingProvider({ children }) {
         logo_url: DEFAULT_BRANDING.logoUrl,
         store_name: DEFAULT_BRANDING.storeName,
         brand_tagline: DEFAULT_BRANDING.brandTagline,
+        whatsapp_phone: DEFAULT_BRANDING.whatsappPhone,
+        whatsapp_button_text: DEFAULT_BRANDING.whatsappButtonText,
+        whatsapp_custom_msg: DEFAULT_BRANDING.whatsappCustomMsg,
       });
     } catch (e) {
       console.warn("Error al restablecer branding en servidor:", e);
@@ -87,6 +127,7 @@ export function BrandingProvider({ children }) {
       value={{
         ...branding,
         updateLogo,
+        updateWhatsApp,
         updateBranding,
         resetBranding,
         isLoaded,

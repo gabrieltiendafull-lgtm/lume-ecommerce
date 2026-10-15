@@ -32,13 +32,13 @@ export default function ProductGrid({ products = [] }) {
       {/* Encabezado del Catálogo */}
       <div className="text-center max-w-2xl mx-auto mb-10">
         <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#9D7940]">
-          Atmósferas &bull; Fragancias &bull; Luz
+          Plata 925 &bull; Baño Oro 18k &bull; Circonias &bull; Perlas
         </span>
         <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-stone-900 mt-2">
-          Colección Completa Lume
+          Colección Exclusiva Lumé
         </h2>
         <p className="text-stone-500 text-sm mt-2">
-          Explora cada una de nuestras piezas diseñadas con ingredientes limpios y recipientes reutilizables.
+          Descubre nuestras joyas, cadenitas delicadas, pulseras y accesorios finos diseñados para realzar tu estilo con sutil elegancia.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export default function ProductGrid({ products = [] }) {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por aroma, vela, difusor o formato..."
+            placeholder="Buscar por cadenita, pulsera, collar, anillo, aros..."
             className="w-full pl-12 pr-10 py-3 bg-white border border-stone-200 rounded-full text-sm text-stone-800 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9D7940] focus:border-transparent transition-all"
           />
           {search && (

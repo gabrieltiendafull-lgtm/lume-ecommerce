@@ -29,14 +29,14 @@ export default function OffersCarousel({ products = [] }) {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold uppercase tracking-wider mb-2">
-              <Flame className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-              Precios Especiales de Temporada
+              <Sparkles className="w-3.5 h-3.5 text-red-500" />
+              Precios Especiales &bull; Joyas Seleccionadas
             </div>
             <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900">
-              Ofertas Destacadas Lume
+              Ofertas Destacadas Lumé
             </h2>
             <p className="text-stone-500 text-sm mt-1">
-              Selección limitada de nuestras creaciones más queridas con descuento exclusivo.
+              Selección limitada de nuestras joyas, pulseras y cadenitas más deseadas con descuento exclusivo.
             </p>
           </div>
 

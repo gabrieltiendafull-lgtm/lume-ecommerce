@@ -4,13 +4,13 @@ import { CartProvider } from "@/context/CartContext";
 import { BrandingProvider } from "@/context/BrandingContext";
 
 export const metadata = {
-  title: "Lume Home & Scents | Catálogo y Panel Administrativo",
+  title: "Lumé Joyas & Accesorios | Joyas, Pulseras y Cadenitas Delicadas",
   description:
-    "Catálogo oficial de Lume. Velas artesanales de cera de soja 100% natural, difusores botánicos y luminarias de diseño para transformar tu hogar.",
-  keywords: "velas aromaticas, cera de soja, difusores, lamparas de sal, deco, aromas, Lume",
+    "Catálogo oficial de Lumé. Joyas, pulseras, cadenitas finas y accesorios delicados para mujer. Diseños sutiles en plata 925 y baño de oro 18k.",
+  keywords: "joyas mujer, cadenitas delicadas, pulseras finas, aros, anillos plata 925, oro 18k, accesorios delicados mujer, Lume, Lume Joyas",
   openGraph: {
-    title: "Lume Home & Scents",
-    description: "Atmósferas de calma, fragancias botánicas y diseño nórdico.",
+    title: "Lumé Joyas & Accesorios",
+    description: "Joyas, pulseras y cadenitas delicadas para mujer con brillo propio.",
     type: "website",
   },
 };

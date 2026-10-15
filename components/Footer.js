@@ -3,10 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { useBranding } from "@/context/BrandingContext";
-import { Sparkles, MessageCircle, Mail, MapPin, Heart } from "lucide-react";
+import { Sparkles, MessageCircle, Mail, MapPin, Heart, Gem } from "lucide-react";
 
 export default function Footer() {
-  const { logoUrl, storeName, brandTagline } = useBranding();
+  const { logoUrl, storeName, brandTagline, whatsappPhone } = useBranding();
+  const cleanPhone = (whatsappPhone || "+54 9 11 2233-4455").replace(/[^0-9]/g, "");
 
   return (
     <footer id="contacto" className="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
@@ -28,16 +29,17 @@ export default function Footer() {
                     <Sparkles className="w-4 h-4 text-stone-900" />
                   </div>
                   <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-white">
-                    {storeName?.split(" ")[0]?.toUpperCase() || "LUME"}
+                    {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
                   </span>
                 </div>
               )}
             </div>
             <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
-              {brandTagline || "Velas artesanales de cera de soja pura, difusores botánicos y ambientación para tu bienestar."}
+              {brandTagline || "Joyas, pulseras y cadenitas delicadas para mujer. Diseños sutiles y elegantes que iluminan tu día a día."}
             </p>
-            <div className="pt-2 text-xs text-[#DAC594] font-medium">
-              Hecho a mano con amor &bull; 100% Eco-friendly
+            <div className="pt-2 text-xs text-[#DAC594] font-medium flex items-center gap-1.5">
+              <Gem className="w-3.5 h-3.5 text-[#DAC594]" />
+              <span>Plata 925 &bull; Baño Oro 18k &bull; Hipoalergénico</span>
             </div>
           </div>
 
@@ -47,42 +49,49 @@ export default function Footer() {
               Colecciones
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
-              <li><a href="#catalogo" className="hover:text-white transition-colors">Velas Aromáticas en Cerámica</a></li>
-              <li><a href="#catalogo" className="hover:text-white transition-colors">Difusores Botánicos Mikado</a></li>
-              <li><a href="#catalogo" className="hover:text-white transition-colors">Velas Esculturales Nórdicas</a></li>
-              <li><a href="#catalogo" className="hover:text-white transition-colors">Lámparas de Sal del Himalaya</a></li>
-              <li><a href="#ofertas" className="hover:text-amber-400 transition-colors font-semibold">Ofertas de Temporada</a></li>
+              <li><a href="#catalogo" className="hover:text-white transition-colors">Cadenitas y Gargantillas</a></li>
+              <li><a href="#catalogo" className="hover:text-white transition-colors">Pulseras Delicadas</a></li>
+              <li><a href="#catalogo" className="hover:text-white transition-colors">Anillos Finos</a></li>
+              <li><a href="#catalogo" className="hover:text-white transition-colors">Aros y Mini Huggies</a></li>
+              <li><a href="#ofertas" className="hover:text-amber-400 transition-colors font-semibold">Ofertas Exclusivas</a></li>
             </ul>
           </div>
 
           {/* Atención y Ventas */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-              Atención al Cliente
+              Atención y Asesoramiento
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>WhatsApp: +54 9 11 2233-4455</span>
+                <a
+                  href={`https://wa.me/${cleanPhone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 transition-colors"
+                >
+                  WhatsApp: {whatsappPhone || "+54 9 11 2233-4455"}
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-stone-400 flex-shrink-0" />
-                <span>contacto@lumehome.com</span>
+                <span>contacto@lumejoyas.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-stone-400 flex-shrink-0" />
-                <span>Envíos a todo el país</span>
+                <span>Envíos asegurados a todo el país</span>
               </li>
             </ul>
           </div>
 
-          {/* Acceso y Garantía */}
+          {/* Acceso y Panel */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-              Empresa
+              Administración
             </h4>
             <p className="text-xs text-stone-400 leading-relaxed">
-              Panel de gestión para inventario, ventas y configuración de marca en tiempo real.
+              Gestión de joyas, inventario, categorías dinámicas y número de WhatsApp en tiempo real.
             </p>
             <div className="pt-2">
               <Link
@@ -100,7 +109,7 @@ export default function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
           <p>&copy; {new Date().getFullYear()} {storeName}. Todos los derechos reservados.</p>
           <p className="flex items-center gap-1">
-            Diseñado para experiencias sensoriales únicas <Heart className="w-3.5 h-3.5 text-amber-500 inline fill-amber-500" />
+            Joyería fina pensada para ti <Heart className="w-3.5 h-3.5 text-amber-500 inline fill-amber-500" />
           </p>
         </div>
       </div>

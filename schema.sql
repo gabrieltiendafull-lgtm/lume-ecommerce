@@ -1,16 +1,36 @@
 -- ==============================================================================
--- SCHEMA DE BASE DE DATOS POSTGRESQL PARA AIVEN.IO
--- MARCA: LUMÉ (LUMÉ HOME & SCENTS)
+-- SCHEMA DE BASE DE DATOS POSTGRESQL PARA AIVEN.IO / SUPABASE
+-- MARCA: LUMÉ (JOYAS, PULSERAS, CADENITAS Y ACCESORIOS DELICADOS DE MUJER)
 -- ==============================================================================
--- Compatible con PostgreSQL 13, 14, 15, 16 en Aiven.io
+-- Compatible con PostgreSQL 13, 14, 15, 16 en Aiven.io y Supabase
 -- Incluye: Tablas, Claves Foráneas, Índices, Trigger de Descuento de Stock y Semillas.
 -- ==============================================================================
 
--- 1. Habilitar extensión para UUIDs (nativo o pgcrypto)
+-- 1. Habilitar extensión para UUIDs
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ==============================================================================
--- 1. TABLA: PRODUCTOS
+-- 1. TABLA: CATEGORIAS (Gestión Dinámica de Categorías)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS categorias (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT UNIQUE NOT NULL,
+    creado_en TIMESTAMP DEFAULT NOW()
+);
+
+-- Semilla de Categorías de Joyería Fina
+INSERT INTO categorias (nombre) VALUES
+('Cadenitas y Gargantillas'),
+('Pulseras Delicadas'),
+('Anillos Finos'),
+('Aros y Aretes'),
+('Dijes y Charms'),
+('Sets de Joyas'),
+('Accesorios de Mujer')
+ON CONFLICT (nombre) DO NOTHING;
+
+-- ==============================================================================
+-- 2. TABLA: PRODUCTOS (Catálogo de Joyas y Accesorios)
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS productos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -20,8 +40,8 @@ CREATE TABLE IF NOT EXISTS productos (
     precio_oferta NUMERIC(10, 2) DEFAULT NULL CHECK (precio_oferta IS NULL OR precio_oferta >= 0),
     es_oferta BOOLEAN DEFAULT false,
     stock INTEGER DEFAULT 0 CHECK (stock >= 0),
-    imagen_url TEXT, -- Almacena exclusivamente la URL pública de la foto
-    categoria TEXT NOT NULL DEFAULT 'Velas Aromáticas',
+    imagen_url TEXT, -- Almacena la URL pública de la foto de la joya
+    categoria TEXT NOT NULL DEFAULT 'Cadenitas y Gargantillas',
     creado_en TIMESTAMP DEFAULT NOW()
 );
 
@@ -30,7 +50,7 @@ CREATE INDEX IF NOT EXISTS idx_productos_es_oferta ON productos(es_oferta);
 CREATE INDEX IF NOT EXISTS idx_productos_stock ON productos(stock);
 
 -- ==============================================================================
--- 2. TABLA: CLIENTES
+-- 3. TABLA: CLIENTES
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS clientes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -45,7 +65,7 @@ CREATE INDEX IF NOT EXISTS idx_clientes_email ON clientes(email);
 CREATE INDEX IF NOT EXISTS idx_clientes_telefono ON clientes(telefono);
 
 -- ==============================================================================
--- 3. TABLA: VENTAS
+-- 4. TABLA: VENTAS
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS ventas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,7 +80,7 @@ CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON ventas(fecha);
 CREATE INDEX IF NOT EXISTS idx_ventas_estado ON ventas(estado);
 
 -- ==============================================================================
--- 4. TABLA: DETALLE_VENTAS
+-- 5. TABLA: DETALLE_VENTAS
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS detalle_ventas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -75,7 +95,7 @@ CREATE INDEX IF NOT EXISTS idx_detalle_ventas_venta_id ON detalle_ventas(venta_i
 CREATE INDEX IF NOT EXISTS idx_detalle_ventas_producto_id ON detalle_ventas(producto_id);
 
 -- ==============================================================================
--- 5. TABLA: GASTOS (Gastos operativos: renta, luz, packaging, publicidad)
+-- 6. TABLA: GASTOS (Empaque joyero, marketing, fotografía)
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS gastos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -85,11 +105,8 @@ CREATE TABLE IF NOT EXISTS gastos (
     fecha TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_gastos_fecha ON gastos(fecha);
-CREATE INDEX IF NOT EXISTS idx_gastos_categoria ON gastos(categoria);
-
 -- ==============================================================================
--- 6. TABLA: COMPRAS (Compras de inventario a proveedores: cera, esencias, mechas)
+-- 7. TABLA: COMPRAS (Metales nobles, perlas, circonias, baños en oro)
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS compras (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -99,18 +116,52 @@ CREATE TABLE IF NOT EXISTS compras (
     fecha TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_compras_fecha ON compras(fecha);
-CREATE INDEX IF NOT EXISTS idx_compras_proveedor ON compras(proveedor);
+-- ==============================================================================
+-- 8. TABLA: CONFIGURACION (Branding, Logo, Teléfono de WhatsApp)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS configuracion (
+    clave TEXT PRIMARY KEY,
+    valor TEXT NOT NULL,
+    actualizado_en TIMESTAMP DEFAULT NOW()
+);
+
+-- Semilla de Configuración Inicial Lumé Joyas
+INSERT INTO configuracion (clave, valor) VALUES
+('logo_url', '/lume-logo.svg'),
+('store_name', 'Lumé Joyas & Accesorios'),
+('brand_tagline', 'Joyas, pulseras y cadenitas delicadas para mujer'),
+('whatsapp_phone', '+54 9 11 2233-4455'),
+('whatsapp_button_text', 'Enviar Confirmación por WhatsApp'),
+('whatsapp_custom_msg', '¡Hola Lumé! Quiero confirmar mi pedido realizado en la tienda online.')
+ON CONFLICT (clave) DO NOTHING;
 
 -- ==============================================================================
--- TRIGGER & FUNCIÓN: DESCUENTO ATÓMICO DE STOCK EN POSTGRESQL (AIVEN.IO)
+-- 9. TABLA: USUARIOS_ADMIN (Credenciales de Administradores)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS usuarios_admin (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    usuario TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    rol TEXT NOT NULL DEFAULT 'Administrador General',
+    activo BOOLEAN DEFAULT true,
+    creado_en TIMESTAMP DEFAULT NOW()
+);
+
+-- Semilla de Administrador Inicial
+INSERT INTO usuarios_admin (nombre, email, usuario, password, rol, activo)
+VALUES ('Administrador Lumé', 'admin@lume.com', 'admin', 'admin123', 'Administrador General', true)
+ON CONFLICT (email) DO NOTHING;
+
+-- ==============================================================================
+-- TRIGGER: DESCUENTO ATÓMICO DE STOCK EN POSTGRESQL
 -- ==============================================================================
 CREATE OR REPLACE FUNCTION fn_descontar_stock_producto()
 RETURNS TRIGGER AS $$
 DECLARE
     v_stock_actual INTEGER;
 BEGIN
-    -- Bloqueo pesimista de fila (FOR UPDATE) para prevenir condiciones de carrera (Race Conditions)
     SELECT stock INTO v_stock_actual
     FROM productos
     WHERE id = NEW.producto_id
@@ -125,7 +176,6 @@ BEGIN
             NEW.producto_id, v_stock_actual, NEW.cantidad;
     END IF;
 
-    -- Descontar existencias automáticamente
     UPDATE productos
     SET stock = stock - NEW.cantidad
     WHERE id = NEW.producto_id;
@@ -140,7 +190,7 @@ AFTER INSERT ON detalle_ventas
 FOR EACH ROW
 EXECUTE FUNCTION fn_descontar_stock_producto();
 
--- Reposición de stock si se elimina o anula un registro de detalle
+-- Reposición de stock si se cancela o elimina detalle
 CREATE OR REPLACE FUNCTION fn_reponer_stock_producto()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -158,66 +208,29 @@ FOR EACH ROW
 EXECUTE FUNCTION fn_reponer_stock_producto();
 
 -- ==============================================================================
--- DATOS SEMILLA (SEED DATA) DE LA MARCA LUMÉ
+-- DATOS SEMILLA (SEED DATA) - JOYAS Y ACCESORIOS LUMÉ
 -- ==============================================================================
 INSERT INTO productos (nombre, descripcion, precio, precio_oferta, es_oferta, stock, imagen_url, categoria)
 VALUES
-('Vela Lumé Santal & Ámbar', 'Vela artesanal en cuenco de cerámica mate con cera 100% de soja natural, mecha de madera crujiente y notas olfativas de sándalo australiano, ámbar cálido y vainilla bourbon.', 28.50, 22.80, true, 45, 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=800&q=80', 'Velas Aromáticas'),
-('Vela Lumé Jazmín Blanco & Té Blanco', 'Elegante fragancia floral serena. Cera de soja vertida a mano con mecha de algodón orgánico. Tiempo de combustión: 55 horas.', 26.00, 19.90, true, 30, 'https://images.unsplash.com/photo-1570823635306-250abb06d4b3?auto=format&fit=crop&w=800&q=80', 'Velas Aromáticas'),
-('Difusor Botánico Lumé Higo & Cedro 250ml', 'Difusor de varillas de ratán natural con aceites esenciales de higo maduro, cedro ahumado y bergamota en frasco de boticario ámbar.', 34.00, 28.90, true, 25, 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80', 'Difusores'),
-('Vela Escultural Lumé Bubble Zen', 'Diseño geométrico nórdico contemporáneo. Ideal como pieza central decorativa. Aroma sutil a lino fresco y flor de azahar.', 24.00, NULL, false, 50, 'https://images.unsplash.com/photo-1602874801007-bd458bb1b8b8?auto=format&fit=crop&w=800&q=80', 'Velas Esculturales'),
-('Lámpara de Sal Rosa del Himalaya Lumé Dome', 'Base de madera maciza de roble y cristal de sal pura del Himalaya tallada a mano con dimmer táctil de luz cálida.', 42.00, 35.00, true, 18, 'https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&w=800&q=80', 'Lámparas de Ambiente'),
-('Bruma de Almohada Lumé Lavanda Silvestre 100ml', 'Spray aromaterapia para inducir el descanso profundo y calmar la mente. Extractos botánicos puros de lavanda francesa y manzanilla.', 18.00, NULL, false, 60, 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800&q=80', 'Aromaterapia'),
-('Vela Lumé Café Espresso & Caramelo Salado', 'Experiencia envolvente de café tostado artesanal con toques de manteca de cacao y caramelo salado en vaso de vidrio ahumado.', 27.00, NULL, false, 35, 'https://images.unsplash.com/photo-1543257580-7269da773bf5?auto=format&fit=crop&w=800&q=80', 'Velas Aromáticas'),
-('Set Regalo Lumé Ritual Cálido (Trio)', 'Caja de regalo prémium en lino que incluye vela miniatura, cerillas de cuello largo en botella de vidrio y difusor 100ml.', 49.00, 39.99, true, 12, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80', 'Sets de Regalo');
+('Cadenita Lumé Punto de Luz en Oro 18k', 'Cadena veneciana extrafina de 45cm con dije circular de circón cúbico engarzado en cuatro puntas. Acabado brillante, sutil y completamente hipoalergénica.', 34.00, 28.00, true, 25, 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80', 'Cadenitas y Gargantillas'),
+('Pulsera Lumé Tennis Delicada de Circonias', 'Pulsera de hilo continuo con circonitas engastadas individualmente en plata 925 con baño de rodio. Cierre de joyero con traba de seguridad lateral.', 32.00, 25.50, true, 20, 'https://images.unsplash.com/photo-1611591475152-47354924c1e4?auto=format&fit=crop&w=800&q=80', 'Pulseras Delicadas'),
+('Cadenita Gargantilla Lumé Perlas de Río Naturales', 'Gargantilla delicada armada con pequeñas perlas de agua dulce seleccionadas y broche marinero bañado en oro de 18 kilates.', 38.00, 29.90, true, 15, 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80', 'Cadenitas y Gargantillas'),
+('Anillo Lumé Solitario Étoile Regulable', 'Anillo minimalista de cuerpo ultrafino en plata 925 con pequeña gema central talla brillante facetada. Diseño regulable que se adapta cómodamente a cualquier dedo.', 24.00, NULL, false, 35, 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80', 'Anillos Finos'),
+('Aros Lumé Mini Argollas Huggies Pavé', 'Par de aros tipo argollita huggie de 10mm recubiertos con delicadas microcirconias pavé. Cierre click a presión, ideales para el día a día o segundo agujero.', 22.00, 18.50, true, 40, 'https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80', 'Aros y Aretes'),
+('Pulsera Lumé Doble Cadena con Medallita Sutil', 'Pulsera de diseño doble con eslabones finos en plata 925 y dije de medallita redonda pulida a espejo. Largo ajustable de 16 a 19 cm.', 27.00, NULL, false, 30, 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=800&q=80', 'Pulseras Delicadas'),
+('Cadenita Lumé Dije Corazón Filigrana Calado', 'Cadenita de eslabón forcé extrafina con colgante de corazón calado con micro grabado artesanal. Baño de oro amarillo 18k.', 29.00, 23.90, true, 18, 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?auto=format&fit=crop&w=800&q=80', 'Cadenitas y Gargantillas'),
+('Set Lumé Dúo Destello: Cadenita + Pulsera a Juego', 'Hermoso conjunto compuesto por cadenita punto de luz y pulsera a tono presentada en caja rígida de terciopelo con cinta de satén.', 49.00, 39.90, true, 12, 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80', 'Sets de Joyas');
 
--- Semilla de Gastos Iniciales
+-- Semilla de Gastos
 INSERT INTO gastos (concepto, monto, categoria, fecha)
 VALUES
-('Renta de Taller y Almacén Lumé', 350.00, 'Operativo', NOW() - INTERVAL '15 days'),
-('Servicio Eléctrico e Internet', 85.00, 'Servicios', NOW() - INTERVAL '10 days'),
-('Cajas de Envío y Papel Seda Personalizado Lumé', 120.00, 'Empaque', NOW() - INTERVAL '5 days'),
-('Campaña Publicitaria Meta / Instagram Ads', 90.00, 'Marketing', NOW() - INTERVAL '3 days');
+('Estuches y Cajas Joyeras de Terciopelo Lumé', 180.00, 'Empaque', NOW() - INTERVAL '15 days'),
+('Campaña Publicitaria Instagram & TikTok Joyas', 120.00, 'Marketing', NOW() - INTERVAL '10 days'),
+('Fotografía Profesional de Joyas y Modelos', 200.00, 'Contenido', NOW() - INTERVAL '5 days');
 
 -- Semilla de Compras a Proveedores
 INSERT INTO compras (proveedor, concepto, monto, fecha)
 VALUES
-('EcoSoy Supplies Co.', 'Cera de soja en escamas 50kg y mechas de madera', 280.00, NOW() - INTERVAL '20 days'),
-('AromaLab Esencias', 'Aceites esenciales botánicos puros (Sándalo, Lavanda, Ámbar)', 195.00, NOW() - INTERVAL '12 days'),
-('Cerámicas Del Valle', '50 Cuencos de cerámica mate para velas Lumé', 160.00, NOW() - INTERVAL '7 days');
-
--- ==============================================================================
--- 7. TABLA: CONFIGURACION (Branding, Logo dinámico, Datos de marca)
--- ==============================================================================
-CREATE TABLE IF NOT EXISTS configuracion (
-    clave TEXT PRIMARY KEY,
-    valor TEXT NOT NULL,
-    actualizado_en TIMESTAMP DEFAULT NOW()
-);
-
--- Semilla de Configuración de Marca Lumé
-INSERT INTO configuracion (clave, valor) VALUES
-('logo_url', '/lume-logo.svg'),
-('store_name', 'Lumé Home & Scents'),
-('brand_tagline', 'Luz, calma y esencias puras para tu espacio')
-ON CONFLICT (clave) DO NOTHING;
-
--- ==============================================================================
--- 8. TABLA: USUARIOS_ADMIN (Credenciales de Administradores)
--- ==============================================================================
-CREATE TABLE IF NOT EXISTS usuarios_admin (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    usuario TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    rol TEXT NOT NULL DEFAULT 'Administrador General',
-    activo BOOLEAN DEFAULT true,
-    creado_en TIMESTAMP DEFAULT NOW()
-);
-
--- Semilla de Usuario Administrador Inicial
-INSERT INTO usuarios_admin (nombre, email, usuario, password, rol, activo)
-VALUES ('Administrador Lumé', 'admin@lume.com', 'admin', 'admin123', 'Administrador General', true)
-ON CONFLICT (email) DO NOTHING;
-
+('Silversmith & Co.', 'Partida de Cadenitas y Dijes Plata 925', 450.00, NOW() - INTERVAL '20 days'),
+('Gems & Gold Plating Labs', 'Baño en Oro 18k y Circonitas Cúbicas AAA', 320.00, NOW() - INTERVAL '12 days'),
+('Pearl River Cultured', 'Lote de Perlas de Río Naturales Cultivadas', 210.00, NOW() - INTERVAL '7 days');

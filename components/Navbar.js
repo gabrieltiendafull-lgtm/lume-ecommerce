@@ -48,7 +48,7 @@ export default function Navbar() {
                       {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
                     </span>
                     <span className="text-[9px] uppercase tracking-[0.3em] text-[#9D7940] font-semibold mt-0.5">
-                      {storeName?.split(" ").slice(1).join(" ") || "Home & Scents"}
+                      {storeName?.split(" ").slice(1).join(" ") || "Joyas & Accesorios"}
                     </span>
                   </div>
                 </div>

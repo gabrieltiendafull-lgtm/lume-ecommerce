@@ -49,13 +49,13 @@ export default function HomePage() {
             
             <div className="max-w-2xl mx-auto space-y-3">
               <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#9D7940]">
-                Manifiesto Artesanal
+                Manifiesto de Joyería &bull; Lumé
               </span>
               <h2 className="font-editorial text-3xl sm:text-4xl font-bold text-stone-900">
-                La Esencia detrás de Lume
+                La Belleza de lo Delicado
               </h2>
               <p className="text-stone-600 text-sm leading-relaxed">
-                Creemos que el hogar debe ser un santuario. Cada una de nuestras velas y difusores nace de la unión entre aceites esenciales botánicos puros, mechas de maderas sostenibles y recipientes en cerámica que invitan a ser reutilizados.
+                Diseñamos joyas y accesorios de mujer que combinan sofisticación, feminidad y sutileza. Cada cadenita, pulsera, aro y anillo está elaborado con plata 925, baño en oro de 18k y gemas seleccionadas que iluminan tu estilo diario con brillo propio.
               </p>
             </div>
 
@@ -66,10 +66,10 @@ export default function HomePage() {
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <h4 className="font-editorial text-base font-bold text-stone-900">
-                  Esencias Naturales
+                  Metales Hipoalergénicos
                 </h4>
                 <p className="text-xs text-stone-500 leading-relaxed">
-                  Formulaciones sin parabenos, ftalatos ni parafinas derivadas del petróleo. Seguras para toda la familia y mascotas.
+                  Piezas en plata 925 y baño de oro 18k 100% libres de níquel. Seguras y cómodas para pieles sensibles todo el día.
                 </p>
               </div>
 
@@ -78,10 +78,10 @@ export default function HomePage() {
                   <Truck className="w-6 h-6" />
                 </div>
                 <h4 className="font-editorial text-base font-bold text-stone-900">
-                  Envíos Cuidados
+                  Packaging de Regalo
                 </h4>
                 <p className="text-xs text-stone-500 leading-relaxed">
-                  Empaque biodegradable acolchado con papel nido de abeja para garantizar que tus piezas lleguen intactas.
+                  Recibe tus joyas en una elegante caja joyera rígida con saquito protector de gamuza, listas para regalar o consentirte.
                 </p>
               </div>
 
@@ -90,10 +90,10 @@ export default function HomePage() {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h4 className="font-editorial text-base font-bold text-stone-900">
-                  Garantía de Satisfacción
+                  Atención Directa por WhatsApp
                 </h4>
                 <p className="text-xs text-stone-500 leading-relaxed">
-                  Si la fragancia no enamora tu espacio, coordinamos el cambio sin complicaciones a través de WhatsApp.
+                  Asesoramiento personalizado en tallas, combinaciones y seguimiento inmediato de tu despacho a través de WhatsApp.
                 </p>
               </div>
             </div>

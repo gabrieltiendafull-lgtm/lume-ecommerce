@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useBranding } from "@/context/BrandingContext";
 import { formatCurrency, generateWhatsAppOrderLink } from "@/lib/utils";
 import { createOrder } from "@/lib/supabase";
 import {
@@ -28,6 +29,8 @@ export default function CartDrawer() {
     subtotal,
     totalItems,
   } = useCart();
+
+  const { whatsappPhone, whatsappButtonText, whatsappCustomMsg } = useBranding();
 
   const [checkoutStep, setCheckoutStep] = useState("cart"); // 'cart' | 'checkout' | 'success'
   const [loading, setLoading] = useState(false);
@@ -140,13 +143,13 @@ export default function CartDrawer() {
                       Tu carrito está vacío
                     </h4>
                     <p className="text-stone-500 text-xs mt-1.5 max-w-xs">
-                      Descubre nuestras velas aromáticas y elementos de ambientación en el catálogo.
+                      Descubre nuestras joyas, cadenitas delicadas y pulseras en el catálogo.
                     </p>
                     <button
                       onClick={() => setIsCartOpen(false)}
                       className="mt-6 px-6 py-2.5 bg-stone-900 text-white text-xs font-semibold rounded-full hover:bg-stone-800 transition-colors"
                     >
-                      Explorar Productos
+                      Explorar Joyas
                     </button>
                   </div>
                 ) : (
@@ -358,24 +361,26 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
-                {/* Botón Principal: WhatsApp */}
+                {/* Botón Principal: WhatsApp Configurable */}
                 <a
                   href={generateWhatsAppOrderLink({
+                    phone: whatsappPhone,
                     orderId: completedOrder.orderId,
                     customer: completedOrder.customer,
                     items: completedOrder.items,
                     total: completedOrder.total,
+                    customMsg: whatsappCustomMsg,
                   })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-0.5 text-sm"
                 >
                   <Send className="w-4 h-4" />
-                  <span>Enviar Confirmación por WhatsApp</span>
+                  <span>{whatsappButtonText || "Enviar Confirmación por WhatsApp"}</span>
                 </a>
 
                 <p className="text-[11px] text-stone-400">
-                  Haz clic arriba para abrir WhatsApp con los datos de tu pedido ya redactados y recibir soporte inmediato.
+                  Haz clic arriba para abrir WhatsApp con los datos de tu pedido ya redactados y recibir soporte directo.
                 </p>
 
                 <button
