@@ -154,3 +154,39 @@ VALUES
 ('EcoSoy Supplies Co.', 'Cera de soja en escamas 50kg y mechas de madera', 280.00, NOW() - INTERVAL '20 days'),
 ('AromaLab Esencias', 'Aceites esenciales botánicos puros (Sándalo, Lavanda, Ámbar)', 195.00, NOW() - INTERVAL '12 days'),
 ('Cerámicas Del Valle', '50 Cuencos de cerámica mate para velas Lumé', 160.00, NOW() - INTERVAL '7 days');
+
+-- ==============================================================================
+-- 7. TABLA: CONFIGURACION (Branding, Logo dinámico, Datos de marca)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS configuracion (
+    clave TEXT PRIMARY KEY,
+    valor TEXT NOT NULL,
+    actualizado_en TIMESTAMP DEFAULT NOW()
+);
+
+-- Semilla de Configuración de Marca Lumé
+INSERT INTO configuracion (clave, valor) VALUES
+('logo_url', '/lume-logo.svg'),
+('store_name', 'Lumé Home & Scents'),
+('brand_tagline', 'Luz, calma y esencias puras para tu espacio')
+ON CONFLICT (clave) DO NOTHING;
+
+-- ==============================================================================
+-- 8. TABLA: USUARIOS_ADMIN (Credenciales de Administradores)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS usuarios_admin (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    usuario TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    rol TEXT NOT NULL DEFAULT 'Administrador General',
+    activo BOOLEAN DEFAULT true,
+    creado_en TIMESTAMP DEFAULT NOW()
+);
+
+-- Semilla de Usuario Administrador Inicial
+INSERT INTO usuarios_admin (nombre, email, usuario, password, rol, activo)
+VALUES ('Administrador Lumé', 'admin@lume.com', 'admin', 'admin123', 'Administrador General', true)
+ON CONFLICT (email) DO NOTHING;
+

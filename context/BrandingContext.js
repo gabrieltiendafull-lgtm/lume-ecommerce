@@ -15,29 +15,18 @@ export function BrandingProvider({ children }) {
   const [branding, setBranding] = useState(DEFAULT_BRANDING);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Cargar configuración de marca (primero de localStorage para velocidad, luego de Supabase)
+  // Cargar configuración de marca directamente desde el servidor central
   useEffect(() => {
     async function loadBranding() {
       try {
-        if (typeof window !== "undefined") {
-          const cached = localStorage.getItem("lume_branding");
-          if (cached) {
-            setBranding((prev) => ({ ...prev, ...JSON.parse(cached) }));
-          }
-        }
-
-        // Consultar Supabase
         const remoteConfig = await getBrandingConfig();
-        if (remoteConfig && remoteConfig.logo_url) {
+        if (remoteConfig && (remoteConfig.logo_url || remoteConfig.store_name)) {
           const updated = {
             logoUrl: remoteConfig.logo_url || DEFAULT_BRANDING.logoUrl,
             storeName: remoteConfig.store_name || DEFAULT_BRANDING.storeName,
             brandTagline: remoteConfig.brand_tagline || DEFAULT_BRANDING.brandTagline,
           };
           setBranding(updated);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("lume_branding", JSON.stringify(updated));
-          }
         }
       } catch (err) {
         console.error("Error al cargar branding:", err);
@@ -49,13 +38,10 @@ export function BrandingProvider({ children }) {
     loadBranding();
   }, []);
 
-  // Actualizar solo el logo
+  // Actualizar solo el logo en el servidor central (se propaga a todos los dispositivos)
   const updateLogo = async (newLogoUrl) => {
     const updated = { ...branding, logoUrl: newLogoUrl };
     setBranding(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lume_branding", JSON.stringify(updated));
-    }
     try {
       await saveBrandingConfig({
         logo_url: newLogoUrl,
@@ -63,17 +49,14 @@ export function BrandingProvider({ children }) {
         brand_tagline: updated.brandTagline,
       });
     } catch (e) {
-      console.warn("No se pudo persistir en Supabase, guardado localmente:", e);
+      console.warn("Error al persistir logo en servidor:", e);
     }
   };
 
-  // Actualizar marca completa (logo, nombre, slogan)
+  // Actualizar marca completa en el servidor central
   const updateBranding = async (partialBranding) => {
     const updated = { ...branding, ...partialBranding };
     setBranding(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lume_branding", JSON.stringify(updated));
-    }
     try {
       await saveBrandingConfig({
         logo_url: updated.logoUrl,
@@ -81,16 +64,13 @@ export function BrandingProvider({ children }) {
         brand_tagline: updated.brandTagline,
       });
     } catch (e) {
-      console.warn("Guardado local:", e);
+      console.warn("Error al persistir branding en servidor:", e);
     }
   };
 
   // Restablecer al logo original
   const resetBranding = async () => {
     setBranding(DEFAULT_BRANDING);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lume_branding", JSON.stringify(DEFAULT_BRANDING));
-    }
     try {
       await saveBrandingConfig({
         logo_url: DEFAULT_BRANDING.logoUrl,
@@ -98,7 +78,7 @@ export function BrandingProvider({ children }) {
         brand_tagline: DEFAULT_BRANDING.brandTagline,
       });
     } catch (e) {
-      console.warn("Error restableciendo en Supabase:", e);
+      console.warn("Error al restablecer branding en servidor:", e);
     }
   };
 
