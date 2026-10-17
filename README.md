@@ -78,6 +78,22 @@ lume-ecommerce/
    - Datos semilla con productos reales de velas y ambientación de la marca Lume.
 5. En **Project Settings > API**, copia la `Project URL` y la `anon public key`.
 
+### Variables necesarias en Render
+
+En el servicio de Render, abre **Environment** y carga estas variables. No uses
+`localhost` en ninguna de ellas:
+
+| Variable | Valor de Supabase |
+| --- | --- |
+| `SUPABASE_DB_URL` | En **Connect > Connection pooling > Session mode**, copia la URI completa. |
+| `NEXT_PUBLIC_SUPABASE_URL` | **Project Settings > API > Project URL**. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **Project Settings > API > anon public key**. |
+
+Después de guardar las variables, ejecuta un redeploy manual. La aplicación usa
+`SUPABASE_DB_URL` exclusivamente en el servidor para productos, pedidos,
+clientes, categorías, gastos, compras y configuración; Render no guarda estos
+datos en archivos locales.
+
 ---
 
 ## 🔥 Paso 2: Configurar Firebase Storage (Plan Gratuito Spark)
