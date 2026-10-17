@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS configuracion (
 );
 
 INSERT INTO configuracion (clave, valor) VALUES
-('logo_url', '/lume-logo.svg'),
+('logo_url', '/lume-logo.png'),
 ('store_name', 'Lumé Joyas & Accesorios'),
 ('brand_tagline', 'Joyas, pulseras y cadenitas delicadas para mujer'),
 ('whatsapp_phone', '+54 9 11 2233-4455'),

@@ -16,24 +16,23 @@ export default function Footer() {
           
           {/* Marca e Identidad Dinámica */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              {logoUrl && logoUrl !== "/lume-logo.svg" ? (
-                <img
-                  src={logoUrl}
-                  alt={storeName}
-                  className="h-10 max-w-[180px] object-contain"
-                />
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#B8944F] flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-stone-900" />
-                  </div>
-                  <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-md overflow-hidden flex-shrink-0">
+                  <img
+                    src={logoUrl || "/lume-logo.png"}
+                    alt={storeName || "Lumé Joyas"}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-editorial text-2xl font-bold tracking-[0.22em] text-white leading-none">
                     {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
                   </span>
+                  <span className="text-[9px] uppercase tracking-[0.25em] text-[#B8944F] font-semibold mt-1">
+                    Joyas & Accesorios
+                  </span>
                 </div>
-              )}
-            </div>
+              </div>
             <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
               {brandTagline || "Joyas, pulseras y cadenitas delicadas para mujer. Diseños sutiles y elegantes que iluminan tu día a día."}
             </p>

@@ -30,29 +30,23 @@ export default function Navbar() {
           {/* Logo Corporativo Dinámico */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="group flex items-center gap-3">
-              {logoUrl && logoUrl !== "/lume-logo.svg" ? (
-                <img
-                  src={logoUrl}
-                  alt={storeName}
-                  className="h-11 max-w-[180px] object-contain transition-transform group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] p-0.5 flex items-center justify-center shadow-sm">
-                    <div className="w-full h-full bg-[#FAF8F5] rounded-full flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-[#9D7940] group-hover:rotate-12 transition-transform" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-editorial text-2xl font-bold tracking-[0.25em] text-stone-900 leading-none">
-                      {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
-                    </span>
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-[#9D7940] font-semibold mt-0.5">
-                      {storeName?.split(" ").slice(1).join(" ") || "Joyas & Accesorios"}
-                    </span>
-                  </div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-11 h-11 rounded-full bg-white border border-stone-200/80 shadow-sm p-1 flex items-center justify-center overflow-hidden flex-shrink-0 transition-transform group-hover:scale-105">
+                  <img
+                    src={logoUrl || "/lume-logo.png"}
+                    alt={storeName || "Lumé Joyas"}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-              )}
+                <div className="flex flex-col">
+                  <span className="font-editorial text-2xl font-bold tracking-[0.22em] text-stone-900 leading-none">
+                    {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
+                  </span>
+                  <span className="text-[9px] uppercase tracking-[0.25em] text-[#9D7940] font-semibold mt-0.5">
+                    {storeName?.split(" ").slice(1).join(" ") || "Joyas & Accesorios"}
+                  </span>
+                </div>
+              </div>
             </Link>
           </div>
 

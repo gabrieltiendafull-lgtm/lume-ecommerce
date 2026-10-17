@@ -74,19 +74,13 @@ export default function AdminLoginPage() {
         <div className="bg-gradient-to-b from-stone-900 via-stone-900 to-stone-950 p-8 text-center text-white relative border-b border-stone-800">
           
           <div className="mb-4 flex items-center justify-center">
-            {logoUrl && logoUrl.startsWith("http") ? (
+            <div className="w-16 h-16 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-lg border border-stone-800">
               <img
-                src={logoUrl}
-                alt={storeName}
-                className="h-14 max-w-[200px] object-contain drop-shadow"
+                src={logoUrl || "/lume-logo.png"}
+                alt={storeName || "Lumé"}
+                className="w-full h-full object-contain"
               />
-            ) : (
-              <img
-                src="/lume-logo.svg"
-                alt="Lume Logo"
-                className="h-12 w-auto invert brightness-200"
-              />
-            )}
+            </div>
           </div>
 
           <h2 className="font-editorial text-2xl font-bold tracking-widest text-white leading-tight">

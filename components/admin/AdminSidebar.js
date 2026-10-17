@@ -39,27 +39,23 @@ export default function AdminSidebar() {
       {/* Brand Header con Logo Dinámico */}
       <div className="p-6 border-b border-stone-800">
         <Link href="/admin" className="flex items-center gap-3">
-          {logoUrl && logoUrl !== "/lume-logo.svg" ? (
-            <img
-              src={logoUrl}
-              alt={storeName}
-              className="h-10 max-w-[160px] object-contain"
-            />
-          ) : (
-            <>
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#9D7940] to-[#E8DCBE] flex items-center justify-center shadow-lg flex-shrink-0">
-                <Sparkles className="w-5 h-5 text-stone-900" />
-              </div>
-              <div className="min-w-0">
-                <span className="font-editorial text-xl font-bold tracking-widest text-white block leading-none truncate">
-                  {storeName?.split(" ")[0]?.toUpperCase() || "LUME"}
-                </span>
-                <span className="text-[10px] uppercase tracking-widest text-[#B8944F] font-semibold">
-                  Admin Suite
-                </span>
-              </div>
-            </>
-          )}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md overflow-hidden flex-shrink-0">
+              <img
+                src={logoUrl || "/lume-logo.png"}
+                alt={storeName || "Lumé"}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="min-w-0">
+              <span className="font-editorial text-xl font-bold tracking-widest text-white block leading-none truncate">
+                {storeName?.split(" ")[0]?.toUpperCase() || "LUMÉ"}
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-[#B8944F] font-semibold">
+                Admin Suite
+              </span>
+            </div>
+          </div>
         </Link>
       </div>
 

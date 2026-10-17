@@ -6,7 +6,7 @@ import { getBrandingConfig, saveBrandingConfig } from "@/lib/supabase";
 const BrandingContext = createContext();
 
 const DEFAULT_BRANDING = {
-  logoUrl: "/lume-logo.svg",
+  logoUrl: "/lume-logo.png",
   storeName: "Lumé Joyas & Accesorios",
   brandTagline: "Joyas, pulseras y cadenitas delicadas para mujer",
   whatsappPhone: "+54 9 11 2233-4455",

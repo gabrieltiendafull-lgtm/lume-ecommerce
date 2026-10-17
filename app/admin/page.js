@@ -50,10 +50,10 @@ export default function AdminDashboardPage() {
     loadDashboardData();
   }, []);
 
-  // Cálculos Financieros
-  const totalVentas = sales.reduce((sum, s) => sum + Number(s.total || 0), 0) || 3420;
-  const totalGastos = expenses.reduce((sum, g) => sum + Number(g.monto || 0), 0) || 645;
-  const totalCompras = purchases.reduce((sum, c) => sum + Number(c.monto || 0), 0) || 1100;
+  // Cálculos Financieros Reales
+  const totalVentas = sales.reduce((sum, s) => sum + Number(s.total || 0), 0);
+  const totalGastos = expenses.reduce((sum, g) => sum + Number(g.monto || 0), 0);
+  const totalCompras = purchases.reduce((sum, c) => sum + Number(c.monto || 0), 0);
   const totalEgresos = totalGastos + totalCompras;
   const gananciaNeta = totalVentas - totalEgresos;
   const margenPorcentaje = totalVentas > 0 ? Math.round((gananciaNeta / totalVentas) * 100) : 0;

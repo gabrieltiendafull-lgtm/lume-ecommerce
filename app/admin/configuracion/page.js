@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import { useBranding } from "@/context/BrandingContext";
-import { uploadProductImage } from "@/lib/firebase";
+import { uploadImageToStorage } from "@/lib/supabase";
 import {
   Sparkles,
   UploadCloud,
@@ -70,7 +70,7 @@ export default function AdminConfiguracionPage() {
     setFeedback({ type: "", message: "" });
 
     try {
-      const uploadedUrl = await uploadProductImage(file);
+      const uploadedUrl = await uploadImageToStorage(file);
       setInputLogoUrl(uploadedUrl);
       await updateLogo(uploadedUrl);
       setFeedback({
@@ -149,7 +149,7 @@ export default function AdminConfiguracionPage() {
   const handleReset = async () => {
     if (confirm("¿Deseas restablecer el logo al diseño original de Lumé?")) {
       await resetBranding();
-      setInputLogoUrl("/lume-logo.svg");
+      setInputLogoUrl("/lume-logo.png");
       setInputStoreName("Lumé Joyas & Accesorios");
       setInputTagline("Joyas, pulseras y cadenitas delicadas para mujer");
       setFeedback({
