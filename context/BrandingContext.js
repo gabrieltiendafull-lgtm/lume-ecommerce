@@ -23,9 +23,11 @@ export function BrandingProvider({ children }) {
     async function loadBranding() {
       try {
         const remoteConfig = await getBrandingConfig();
-        if (remoteConfig && (remoteConfig.logo_url || remoteConfig.store_name || remoteConfig.whatsapp_phone)) {
+          const cleanLogoUrl = (!remoteConfig.logo_url || remoteConfig.logo_url === "/lume-logo.svg" || remoteConfig.logo_url.startsWith("blob:"))
+            ? DEFAULT_BRANDING.logoUrl
+            : remoteConfig.logo_url;
           const updated = {
-            logoUrl: remoteConfig.logo_url || DEFAULT_BRANDING.logoUrl,
+            logoUrl: cleanLogoUrl,
             storeName: remoteConfig.store_name || DEFAULT_BRANDING.storeName,
             brandTagline: remoteConfig.brand_tagline || DEFAULT_BRANDING.brandTagline,
             whatsappPhone: remoteConfig.whatsapp_phone || DEFAULT_BRANDING.whatsappPhone,
